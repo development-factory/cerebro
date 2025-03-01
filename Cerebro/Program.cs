@@ -1,7 +1,13 @@
+using Cerebro.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<AppDbContext>(options => 
+    options.UseSqlite("DataSource=C:\\Users\\bogda\\source\\repos\\YoutubeProjects\\Cerebro\\cerebro.db"));
 
 var app = builder.Build();
 
