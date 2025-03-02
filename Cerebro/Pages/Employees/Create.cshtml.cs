@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Cerebro.Data;
 
 namespace Cerebro.Pages.Employees
 {
     public class CreateModel : PageModel
     {
-        private readonly Cerebro.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public CreateModel(Cerebro.Data.AppDbContext context)
+        public CreateModel(AppDbContext context)
         {
             _context = context;
         }
@@ -26,7 +21,6 @@ namespace Cerebro.Pages.Employees
         [BindProperty]
         public Employee Employee { get; set; } = default!;
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -37,7 +31,7 @@ namespace Cerebro.Pages.Employees
             _context.Employees.Add(Employee);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("../Index");
         }
     }
 }

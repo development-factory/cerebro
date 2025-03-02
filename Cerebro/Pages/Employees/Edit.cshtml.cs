@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Cerebro.Data;
 
 namespace Cerebro.Pages.Employees
 {
     public class EditModel : PageModel
     {
-        private readonly Cerebro.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public EditModel(Cerebro.Data.AppDbContext context)
+        public EditModel(AppDbContext context)
         {
             _context = context;
         }
@@ -38,8 +33,6 @@ namespace Cerebro.Pages.Employees
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

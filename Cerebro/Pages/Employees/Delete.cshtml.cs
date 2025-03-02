@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Cerebro.Data;
 
 namespace Cerebro.Pages.Employees
 {
     public class DeleteModel : PageModel
     {
-        private readonly Cerebro.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public DeleteModel(Cerebro.Data.AppDbContext context)
+        public DeleteModel(AppDbContext context)
         {
             _context = context;
         }
@@ -55,7 +51,7 @@ namespace Cerebro.Pages.Employees
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("../Index");
         }
     }
 }

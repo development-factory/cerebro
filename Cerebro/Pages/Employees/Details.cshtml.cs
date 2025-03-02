@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Cerebro.Data;
 
 namespace Cerebro.Pages.Employees
 {
     public class DetailsModel : PageModel
     {
-        private readonly Cerebro.Data.AppDbContext _context;
+        private readonly AppDbContext _context;
 
-        public DetailsModel(Cerebro.Data.AppDbContext context)
+        public DetailsModel(AppDbContext context)
         {
             _context = context;
         }

@@ -39,7 +39,9 @@
             <div class="form-group">
                 
                 <label asp-for="Employee.Role" class="control-label"></label>
-                <select asp-for="Employee.Role" class="form-control" asp-items="Html.GetEnumSelectList<EmployeeRole>()"></select>
+                <select asp-for="Employee.Role" class="form-control" asp-items="Html.GetEnumSelectList<EmployeeRole>()">
+                    <option selected="selected">Please select</option>
+                </select>
                 <span asp-validation-for="Employee.Role" class="text-danger"></span>
             </div>
             <div class="form-group">
