@@ -1,10 +1,77 @@
 ﻿@page
 @model IndexModel
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="border border-2 p-3">
+    <p>
+        <a class="btn btn-primary" asp-page="/Employees/Create"><i class="bi bi-plus-circle-fill"></i></a>
+    </p>
+
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].DateOfBirth)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].HiringDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].Role)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].Salary)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee[0].ExitDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Employee)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @item.DateOfBirth.ToShortDateString()
+                    </td>
+                    <td>
+                        @item.HiringDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Salary)
+                    </td>
+                    <td>
+                        @item.ExitDate?.ToShortDateString()
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" asp-page="./Edit" asp-route-id="@item.Id"><i class="bi bi-pen-fill"></i></a>
+                        <a class="btn btn-dark" asp-page="./Details" asp-route-id="@item.Id"><i class="bi bi-info-circle-fill"></i></a>
+                        <a class="btn btn-danger" asp-page="./Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
 </div>
+
+

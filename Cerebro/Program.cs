@@ -6,8 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? throw new InvalidOperationException("Connection string not found");
+
 builder.Services.AddDbContext<AppDbContext>(options => 
-    options.UseSqlite("DataSource=C:\\Users\\bogda\\source\\repos\\YoutubeProjects\\Cerebro\\cerebro.db"));
+    options.UseSqlite(connectionString));
 
 var app = builder.Build();
 
