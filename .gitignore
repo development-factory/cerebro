@@ -17,6 +17,7 @@
 mono_crash.*
 
 *.db
+*.db-*
 
 # Build results
 [Dd]ebug/

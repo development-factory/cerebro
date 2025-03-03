@@ -1,4 +1,5 @@
-﻿using Cerebro.Data;
+﻿using Cerebro.Abstractions;
+using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,11 +7,11 @@ namespace Cerebro.Pages.Employees
 {
     public class CreateModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly IEmployeeService _employeeService;
 
-        public CreateModel(AppDbContext context)
+        public CreateModel(IEmployeeService employeeService)
         {
-            _context = context;
+            _employeeService = employeeService;
         }
 
         public IActionResult OnGet()
@@ -21,15 +22,27 @@ namespace Cerebro.Pages.Employees
         [BindProperty]
         public Employee Employee { get; set; } = default!;
 
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Employees.Add(Employee);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _employeeService.Create(Employee);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return Page();
+            }
+            catch (Exception)
+            {
+                return RedirectToPage("../Error");
+            }
+
 
             return RedirectToPage("../Index");
         }

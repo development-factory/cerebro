@@ -1,9 +1,10 @@
-﻿using Cerebro.Data;
+﻿using Cerebro.Abstractions;
+using Cerebro.Data;
 using Cerebro.Exceptions;
 
 namespace Cerebro.Services;
 
-public class EmployeeService
+public class EmployeeService : IEmployeeService
 {
     private readonly AppDbContext _context;
     public EmployeeService(AppDbContext context)

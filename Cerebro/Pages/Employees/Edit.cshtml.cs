@@ -1,69 +1,66 @@
-﻿using Cerebro.Data;
+﻿using Cerebro.Abstractions;
+using Cerebro.Data;
+using Cerebro.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Cerebro.Pages.Employees
 {
     public class EditModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly IEmployeeService _employeeService;
 
-        public EditModel(AppDbContext context)
+        public EditModel(IEmployeeService employeeService)
         {
-            _context = context;
+            _employeeService = employeeService;
         }
 
         [BindProperty]
         public Employee Employee { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employee =  await _context.Employees.FirstOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
+            try
+            {
+                Employee = _employeeService.GetById(id.Value);
+            }
+            catch (EmployeeNotFoundException)
             {
                 return NotFound();
             }
-            Employee = employee;
+            catch (Exception)
+            {
+                return RedirectToPage("../Error");
+            }
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost(int? id)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return Page();
+                return NotFound();
             }
-
-            _context.Attach(Employee).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                _employeeService.Update(Employee);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (EmployeeNotFoundException)
             {
-                if (!EmployeeExists(Employee.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return RedirectToPage("../Error");
             }
 
-            return RedirectToPage("./Index");
-        }
-
-        private bool EmployeeExists(int id)
-        {
-            return _context.Employees.Any(e => e.Id == id);
+            return RedirectToPage("../Index");
         }
     }
 }

@@ -1,23 +1,23 @@
-﻿using Cerebro.Data;
+﻿using Cerebro.Abstractions;
+using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Cerebro.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly IEmployeeService _employeeService;
 
-        public IndexModel(AppDbContext context)
+        public IndexModel(IEmployeeService employeeService)
         {
-            _context = context;
+           _employeeService = employeeService;
         }
 
         public IList<Employee> Employees { get; set; } = default!;
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
-            Employees = await _context.Employees.ToListAsync();
+            Employees = _employeeService.GetAll().ToList();
         }
     }
 }

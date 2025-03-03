@@ -1,54 +1,63 @@
-﻿using Cerebro.Data;
+﻿using Cerebro.Abstractions;
+using Cerebro.Data;
+using Cerebro.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Cerebro.Pages.Employees
 {
     public class DeleteModel : PageModel
     {
-        private readonly AppDbContext _context;
+        private readonly IEmployeeService _employeeService;
 
-        public DeleteModel(AppDbContext context)
+        public DeleteModel(IEmployeeService employeeService)
         {
-            _context = context;
+            _employeeService = employeeService;
         }
 
         [BindProperty]
         public Employee Employee { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (employee is not null)
+            try
             {
-                Employee = employee;
-
-                return Page();
+                Employee = _employeeService.GetById(id.Value);
             }
-
-            return NotFound();
+            catch (EmployeeNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return RedirectToPage("../Error");
+            }
+            return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public IActionResult OnPost(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee != null)
+            try
             {
-                Employee = employee;
-                _context.Employees.Remove(Employee);
-                await _context.SaveChangesAsync();
+                _employeeService.Delete(id.Value);
+            }
+            catch (EmployeeNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return RedirectToPage("../Error");
             }
 
             return RedirectToPage("../Index");
