@@ -50,7 +50,7 @@ namespace Cerebro.Pages.Employees
             try
             {
                 _employeeService.Update(Employee);
-            }
+            }   
             catch (EmployeeNotFoundException)
             {
                 return NotFound();

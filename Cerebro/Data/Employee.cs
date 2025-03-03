@@ -19,6 +19,8 @@ public class Employee
     [Display(Name = "Hiring Date")]
     public DateTime HiringDate { get; set; }
     public EmployeeRole Role { get; set; }
+
+    [DisplayFormat(DataFormatString = "{0:N0}", ApplyFormatInEditMode = false)]
     public decimal Salary { get; set; }
 
     [Display(Name = "Exit Date")]

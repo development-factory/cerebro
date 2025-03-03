@@ -60,6 +60,15 @@ public class EmployeeService : IEmployeeService
         return _context.Employees;
     }
 
+    public IEnumerable<Employee> SearchByName(string name)
+    {
+        name = name.ToLower();
+
+        return _context.Employees
+            .Where(e => e.FirstName.ToLower().Contains(name) ||
+            e.LastName.ToLower().Contains(name));
+    }
+
     public void Update(Employee employee)
     {
         var persistedEmployee = _context.Employees.Find(employee.Id)
