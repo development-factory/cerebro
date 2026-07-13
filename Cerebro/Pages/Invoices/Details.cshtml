@@ -1,0 +1,35 @@
+@page
+@model Cerebro.Pages.Invoices.DetailsModel
+
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+<div class="row border border-2 p-3">
+    <h1>Invoice details</h1>
+    <dl class="row">
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.Id)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Invoice.Id)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.InvoiceNumber)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Invoice.InvoiceNumber)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.ClientName)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Invoice.ClientName)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.IssueDate)</dt>
+        <dd class="col-sm-10">@Model.Invoice.IssueDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.DueDate)</dt>
+        <dd class="col-sm-10">@Model.Invoice.DueDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.Amount)</dt>
+        <dd class="col-sm-10">@Model.Invoice.Amount.ToString("C")</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.IsPaid)</dt>
+        <dd class="col-sm-10">@(Model.Invoice.IsPaid ? "Yes" : "No")</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.Notes)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Invoice.Notes)</dd>
+    </dl>
+</div>

@@ -1,0 +1,44 @@
+@page
+@model Cerebro.Pages.Invoices.IndexModel
+
+@{
+    ViewData["Title"] = "Invoices";
+}
+
+<div class="border border-2 p-3">
+    <p>
+        <a class="btn btn-primary" asp-page="/Invoices/Create"><i class="bi bi-plus-circle-fill"></i></a>
+    </p>
+
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Invoices[0].InvoiceNumber)</th>
+                <th>@Html.DisplayNameFor(model => model.Invoices[0].ClientName)</th>
+                <th>@Html.DisplayNameFor(model => model.Invoices[0].IssueDate)</th>
+                <th>@Html.DisplayNameFor(model => model.Invoices[0].DueDate)</th>
+                <th>@Html.DisplayNameFor(model => model.Invoices[0].Amount)</th>
+                <th>@Html.DisplayNameFor(model => model.Invoices[0].IsPaid)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Invoices)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.InvoiceNumber)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ClientName)</td>
+                    <td>@item.IssueDate.ToShortDateString()</td>
+                    <td>@item.DueDate.ToShortDateString()</td>
+                    <td>@item.Amount.ToString("C")</td>
+                    <td>@(item.IsPaid ? "Yes" : "No")</td>
+                    <td>
+                        <a class="btn btn-primary" asp-page="./Edit" asp-route-id="@item.Id"><i class="bi bi-pen-fill"></i></a>
+                        <a class="btn btn-dark" asp-page="./Details" asp-route-id="@item.Id"><i class="bi bi-info-circle-fill"></i></a>
+                        <a class="btn btn-danger" asp-page="./Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,59 @@
+@page
+@model Cerebro.Pages.Invoices.CreateModel
+
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<div class="row border border-2 p-3">
+    <h1>Create new invoice</h1>
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Invoice.InvoiceNumber" class="control-label"></label>
+                <input asp-for="Invoice.InvoiceNumber" class="form-control" />
+                <span asp-validation-for="Invoice.InvoiceNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Invoice.ClientName" class="control-label"></label>
+                <input asp-for="Invoice.ClientName" class="form-control" />
+                <span asp-validation-for="Invoice.ClientName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Invoice.IssueDate" class="control-label"></label>
+                <input asp-for="Invoice.IssueDate" type="date" class="form-control" />
+                <span asp-validation-for="Invoice.IssueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Invoice.DueDate" class="control-label"></label>
+                <input asp-for="Invoice.DueDate" type="date" class="form-control" />
+                <span asp-validation-for="Invoice.DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Invoice.Amount" class="control-label"></label>
+                <input asp-for="Invoice.Amount" type="number" step="0.01" class="form-control" />
+                <span asp-validation-for="Invoice.Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check mt-2">
+                <input asp-for="Invoice.IsPaid" class="form-check-input" />
+                <label asp-for="Invoice.IsPaid" class="form-check-label"></label>
+                <span asp-validation-for="Invoice.IsPaid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Invoice.Notes" class="control-label"></label>
+                <textarea asp-for="Invoice.Notes" class="form-control"></textarea>
+                <span asp-validation-for="Invoice.Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary mt-3" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
