@@ -1,0 +1,38 @@
+@page
+@model Cerebro.Pages.CatalogItems.IndexModel
+
+@{
+    ViewData["Title"] = "Products & Services";
+}
+
+<div class="border border-2 p-3">
+    <p>
+        <a class="btn btn-primary" asp-page="/CatalogItems/Create"><i class="bi bi-plus-circle-fill"></i></a>
+    </p>
+
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Default Unit Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CatalogItems)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Type)</td>
+                    <td>@item.DefaultUnitPrice.ToString("C")</td>
+                    <td>
+                        <a class="btn btn-primary" asp-page="./Edit" asp-route-id="@item.Id"><i class="bi bi-pen-fill"></i></a>
+                        <a class="btn btn-dark" asp-page="./Details" asp-route-id="@item.Id"><i class="bi bi-info-circle-fill"></i></a>
+                        <a class="btn btn-danger" asp-page="./Delete" asp-route-id="@item.Id"><i class="bi bi-trash3-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

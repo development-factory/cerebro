@@ -19,6 +19,15 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        dbContext.Database.ExecuteSqlRaw("DELETE FROM \"__EFMigrationsLock\";");
+    }
+    catch
+    {
+        // Ignore missing lock table or any stale-lock cleanup failure and try migrate anyway.
+    }
+
     dbContext.Database.Migrate();
 }
 

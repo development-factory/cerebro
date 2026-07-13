@@ -7,53 +7,217 @@
 
 <div class="row border border-2 p-3">
     <h1>Create new invoice</h1>
-    <div class="col-md-4">
+    <div class="col-12">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Invoice.InvoiceNumber" class="control-label"></label>
-                <input asp-for="Invoice.InvoiceNumber" class="form-control" />
-                <span asp-validation-for="Invoice.InvoiceNumber" class="text-danger"></span>
+            @if (!Model.CatalogItemOptions.Any())
+            {
+                <div class="alert alert-warning">
+                    Create at least one product or service before creating invoices.
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <label asp-for="Invoice.InvoiceNumber" class="control-label"></label>
+                    <input asp-for="Invoice.InvoiceNumber" class="form-control" />
+                    <span asp-validation-for="Invoice.InvoiceNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label asp-for="Invoice.ClientName" class="control-label"></label>
+                    <input asp-for="Invoice.ClientName" class="form-control" />
+                    <span asp-validation-for="Invoice.ClientName" class="text-danger"></span>
+                </div>
+                <div class="col-md-2 form-group">
+                    <label asp-for="Invoice.IssueDate" class="control-label"></label>
+                    <input asp-for="Invoice.IssueDate" type="date" class="form-control" />
+                    <span asp-validation-for="Invoice.IssueDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-2 form-group">
+                    <label asp-for="Invoice.DueDate" class="control-label"></label>
+                    <input asp-for="Invoice.DueDate" type="date" class="form-control" />
+                    <span asp-validation-for="Invoice.DueDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-2 form-group form-check mt-4 pt-2">
+                    <input asp-for="Invoice.IsPaid" class="form-check-input" />
+                    <label asp-for="Invoice.IsPaid" class="form-check-label"></label>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Invoice.ClientName" class="control-label"></label>
-                <input asp-for="Invoice.ClientName" class="form-control" />
-                <span asp-validation-for="Invoice.ClientName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Invoice.IssueDate" class="control-label"></label>
-                <input asp-for="Invoice.IssueDate" type="date" class="form-control" />
-                <span asp-validation-for="Invoice.IssueDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Invoice.DueDate" class="control-label"></label>
-                <input asp-for="Invoice.DueDate" type="date" class="form-control" />
-                <span asp-validation-for="Invoice.DueDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Invoice.Amount" class="control-label"></label>
-                <input asp-for="Invoice.Amount" type="number" step="0.01" class="form-control" />
-                <span asp-validation-for="Invoice.Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check mt-2">
-                <input asp-for="Invoice.IsPaid" class="form-check-input" />
-                <label asp-for="Invoice.IsPaid" class="form-check-label"></label>
-                <span asp-validation-for="Invoice.IsPaid" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mt-3">
                 <label asp-for="Invoice.Notes" class="control-label"></label>
                 <textarea asp-for="Invoice.Notes" class="form-control"></textarea>
                 <span asp-validation-for="Invoice.Notes" class="text-danger"></span>
             </div>
+
+            <div class="d-flex align-items-center justify-content-between mt-4">
+                <h3 class="mb-0">Line items</h3>
+                <button type="button" class="btn btn-outline-primary" id="add-line-item">Add line</button>
+            </div>
+
+            <div class="table-responsive mt-3">
+                <table class="table align-middle" id="line-items-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Product or Service</th>
+                            <th style="width: 120px;">Quantity</th>
+                            <th style="width: 160px;">Unit Price</th>
+                            <th style="width: 160px;">Line Total</th>
+                            <th style="width: 90px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="line-items-body">
+                        @for (var i = 0; i < Model.LineItems.Count; i++)
+                        {
+                            <tr class="line-item-row">
+                                <td>
+                                    <select class="form-control" name="LineItems[@i].CatalogItemId">
+                                        <option value="0">Select item</option>
+                                        @foreach (var item in Model.CatalogItemOptions)
+                                        {
+                                            if (item.Value == Model.LineItems[i].CatalogItemId.ToString())
+                                            {
+                                                <option value="@item.Value" selected>@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" min="1" name="LineItems[@i].Quantity" value="@Model.LineItems[i].Quantity" />
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" step="0.01" min="0" name="LineItems[@i].UnitPrice" value="@Model.LineItems[i].UnitPrice" />
+                                </td>
+                                <td>
+                                    <input class="form-control js-line-total" type="text" readonly value="@(Model.LineItems[i].LineTotal.ToString("C"))" />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-danger js-remove-line">Remove</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-3">
+                <strong>Invoice total: <span id="invoice-total">@Model.LineItems.Sum(item => item.LineTotal).ToString("C")</span></strong>
+            </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary mt-3" />
+                <input type="submit" value="Create" class="btn btn-primary mt-3" @(Model.CatalogItemOptions.Any() ? null : "disabled") />
             </div>
         </form>
     </div>
 </div>
 
+<template id="line-item-template">
+    <tr class="line-item-row">
+        <td>
+            <select class="form-control" name="LineItems[__index__].CatalogItemId">
+                <option value="0">Select item</option>
+                @foreach (var item in Model.CatalogItemOptions)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </td>
+        <td>
+            <input class="form-control" type="number" min="1" name="LineItems[__index__].Quantity" value="1" />
+        </td>
+        <td>
+            <input class="form-control" type="number" step="0.01" min="0" name="LineItems[__index__].UnitPrice" value="0" />
+        </td>
+        <td>
+            <input class="form-control js-line-total" type="text" readonly value="$0.00" />
+        </td>
+        <td>
+            <button type="button" class="btn btn-outline-danger js-remove-line">Remove</button>
+        </td>
+    </tr>
+</template>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        (function () {
+            const body = document.getElementById('line-items-body');
+            const template = document.getElementById('line-item-template');
+            const addButton = document.getElementById('add-line-item');
+
+            function renumberRows() {
+                const rows = body.querySelectorAll('.line-item-row');
+                rows.forEach((row, index) => {
+                    row.querySelectorAll('select, input').forEach((input) => {
+                        input.name = input.name.replace(/LineItems\[\d+\]/, `LineItems[${index}]`);
+                    });
+                });
+            }
+
+            function recalculateTotals() {
+                let invoiceTotal = 0;
+
+                body.querySelectorAll('.line-item-row').forEach((row) => {
+                    const quantity = parseFloat(row.querySelector('input[name$=".Quantity"]').value || '0');
+                    const unitPrice = parseFloat(row.querySelector('input[name$=".UnitPrice"]').value || '0');
+                    const lineTotal = quantity * unitPrice;
+                    row.querySelector('.js-line-total').value = new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                    }).format(lineTotal);
+                    invoiceTotal += lineTotal;
+                });
+
+                document.getElementById('invoice-total').textContent = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(invoiceTotal);
+            }
+
+            function appendRow() {
+                const row = template.content.firstElementChild.cloneNode(true);
+                const index = body.querySelectorAll('.line-item-row').length;
+                row.innerHTML = row.innerHTML.replaceAll('__index__', index);
+                body.appendChild(row);
+                renumberRows();
+                recalculateTotals();
+            }
+
+            addButton?.addEventListener('click', appendRow);
+
+            body.addEventListener('click', function (event) {
+                const removeButton = event.target.closest('.js-remove-line');
+                if (!removeButton) {
+                    return;
+                }
+
+                const row = removeButton.closest('.line-item-row');
+                row?.remove();
+                if (!body.querySelector('.line-item-row')) {
+                    appendRow();
+                } else {
+                    renumberRows();
+                    recalculateTotals();
+                }
+            });
+
+            body.addEventListener('input', function (event) {
+                if (event.target.matches('input[name$=".Quantity"], input[name$=".UnitPrice"]')) {
+                    recalculateTotals();
+                }
+            });
+
+            if (!body.querySelector('.line-item-row')) {
+                appendRow();
+            } else {
+                recalculateTotals();
+            }
+        })();
+    </script>
 }

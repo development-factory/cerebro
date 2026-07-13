@@ -23,13 +23,38 @@
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.DueDate)</dt>
         <dd class="col-sm-10">@Model.Invoice.DueDate.ToShortDateString()</dd>
 
-        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.Amount)</dt>
-        <dd class="col-sm-10">@Model.Invoice.Amount.ToString("C")</dd>
-
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.IsPaid)</dt>
         <dd class="col-sm-10">@(Model.Invoice.IsPaid ? "Yes" : "No")</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.Amount)</dt>
+        <dd class="col-sm-10">@Model.Invoice.Amount.ToString("C")</dd>
 
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Invoice.Notes)</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.Invoice.Notes)</dd>
     </dl>
+
+    <h3>Line items</h3>
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>Item</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Line Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.LineItems)
+            {
+                <tr>
+                    <td>@item.CatalogItem?.Name</td>
+                    <td>@item.CatalogItem?.Type</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice.ToString("C")</td>
+                    <td>@item.LineTotal.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

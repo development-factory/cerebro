@@ -14,6 +14,7 @@ public class DetailsModel : PageModel
     }
 
     public Invoice Invoice { get; set; } = default!;
+    public IList<InvoiceLineItem> LineItems { get; set; } = [];
 
     public IActionResult OnGet(int? id)
     {
@@ -27,6 +28,19 @@ public class DetailsModel : PageModel
         {
             return NotFound();
         }
+
+        LineItems = _context.InvoiceLineItems
+            .Where(lineItem => lineItem.InvoiceId == id.Value)
+            .Select(lineItem => new InvoiceLineItem
+            {
+                Id = lineItem.Id,
+                InvoiceId = lineItem.InvoiceId,
+                CatalogItemId = lineItem.CatalogItemId,
+                CatalogItem = _context.CatalogItems.FirstOrDefault(x => x.Id == lineItem.CatalogItemId),
+                Quantity = lineItem.Quantity,
+                UnitPrice = lineItem.UnitPrice
+            })
+            .ToList();
 
         return Page();
     }

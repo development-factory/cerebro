@@ -1,0 +1,26 @@
+@page
+@model Cerebro.Pages.CatalogItems.DetailsModel
+
+@{
+    ViewData["Title"] = "Product or Service Details";
+}
+
+<div class="row border border-2 p-3">
+    <h1>Product or service details</h1>
+    <dl class="row">
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CatalogItem.Id)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CatalogItem.Id)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CatalogItem.Name)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CatalogItem.Name)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CatalogItem.Type)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CatalogItem.Type)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CatalogItem.DefaultUnitPrice)</dt>
+        <dd class="col-sm-10">@Model.CatalogItem.DefaultUnitPrice.ToString("C")</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CatalogItem.Description)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.CatalogItem.Description)</dd>
+    </dl>
+</div>
