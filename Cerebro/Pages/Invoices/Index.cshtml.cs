@@ -1,4 +1,3 @@
-using Cerebro.Abstractions;
 using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,17 +5,20 @@ namespace Cerebro.Pages.Invoices;
 
 public class IndexModel : PageModel
 {
-    private readonly IInvoiceService _invoiceService;
+    private readonly AppDbContext _context;
 
-    public IndexModel(IInvoiceService invoiceService)
+    public IndexModel(AppDbContext context)
     {
-        _invoiceService = invoiceService;
+        _context = context;
     }
 
     public IList<Invoice> Invoices { get; set; } = default!;
 
     public void OnGet()
     {
-        Invoices = _invoiceService.GetAll().ToList();
+        Invoices = _context.Invoices
+            .OrderByDescending(i => i.IssueDate)
+            .ThenByDescending(i => i.Id)
+            .ToList();
     }
 }

@@ -1,33 +1,35 @@
-﻿using Cerebro.Abstractions;
 using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Cerebro.Pages
+namespace Cerebro.Pages;
+
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    private readonly AppDbContext _context;
+
+    public IndexModel(AppDbContext context)
     {
-        private readonly IEmployeeService _employeeService;
+        _context = context;
+    }
 
-        public IndexModel(IEmployeeService employeeService)
+    public IList<Employee> Employees { get; set; } = default!;
+
+    [BindProperty(SupportsGet = true)]
+    public string? SearchString { get; set; }
+
+    public void OnGet()
+    {
+        if (!string.IsNullOrWhiteSpace(SearchString))
         {
-           _employeeService = employeeService;
+            var search = SearchString.ToLower();
+            Employees = _context.Employees
+                .Where(e => e.FirstName.ToLower().Contains(search) ||
+                            e.LastName.ToLower().Contains(search))
+                .ToList();
+            return;
         }
 
-        public IList<Employee> Employees { get; set; } = default!;
-
-        [BindProperty(SupportsGet = true)]
-        public string? SearchString { get; set; }
-
-        public void OnGet()
-        {
-            if (!string.IsNullOrWhiteSpace(SearchString))
-            {
-                Employees = _employeeService.SearchByName(SearchString).ToList();
-                return;
-            }
-
-            Employees = _employeeService.GetAll().ToList();
-        }
+        Employees = _context.Employees.ToList();
     }
 }

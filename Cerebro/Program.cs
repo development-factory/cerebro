@@ -1,6 +1,4 @@
-using Cerebro.Abstractions;
 using Cerebro.Data;
-using Cerebro.Services;
 using Cerebro.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +13,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlite(connectionString));
-
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 var app = builder.Build();
 

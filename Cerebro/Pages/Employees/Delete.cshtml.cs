@@ -1,66 +1,53 @@
-﻿using Cerebro.Abstractions;
 using Cerebro.Data;
-using Cerebro.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Cerebro.Pages.Employees
+namespace Cerebro.Pages.Employees;
+
+public class DeleteModel : PageModel
 {
-    public class DeleteModel : PageModel
+    private readonly AppDbContext _context;
+
+    public DeleteModel(AppDbContext context)
     {
-        private readonly IEmployeeService _employeeService;
+        _context = context;
+    }
 
-        public DeleteModel(IEmployeeService employeeService)
+    [BindProperty]
+    public Employee Employee { get; set; } = default!;
+
+    public IActionResult OnGet(int? id)
+    {
+        if (id == null)
         {
-            _employeeService = employeeService;
+            return NotFound();
         }
 
-        [BindProperty]
-        public Employee Employee { get; set; } = default!;
-
-        public IActionResult OnGet(int? id)
+        Employee = _context.Employees.Find(id.Value) ?? default!;
+        if (Employee is null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                Employee = _employeeService.GetById(id.Value);
-            }
-            catch (EmployeeNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return RedirectToPage("../Error");
-            }
-            return Page();
+            return NotFound();
         }
 
-        public IActionResult OnPost(int? id)
+        return Page();
+    }
+
+    public IActionResult OnPost(int? id)
+    {
+        if (id == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                _employeeService.Delete(id.Value);
-            }
-            catch (EmployeeNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return RedirectToPage("../Error");
-            }
-
-            return RedirectToPage("../Index");
+            return NotFound();
         }
+
+        var employee = _context.Employees.Find(id.Value);
+        if (employee is null)
+        {
+            return NotFound();
+        }
+
+        _context.Employees.Remove(employee);
+        _context.SaveChanges();
+
+        return RedirectToPage("../Index");
     }
 }

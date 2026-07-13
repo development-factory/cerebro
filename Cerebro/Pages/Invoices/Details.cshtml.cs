@@ -1,6 +1,4 @@
-using Cerebro.Abstractions;
 using Cerebro.Data;
-using Cerebro.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,11 +6,11 @@ namespace Cerebro.Pages.Invoices;
 
 public class DetailsModel : PageModel
 {
-    private readonly IInvoiceService _invoiceService;
+    private readonly AppDbContext _context;
 
-    public DetailsModel(IInvoiceService invoiceService)
+    public DetailsModel(AppDbContext context)
     {
-        _invoiceService = invoiceService;
+        _context = context;
     }
 
     public Invoice Invoice { get; set; } = default!;
@@ -24,17 +22,10 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        try
-        {
-            Invoice = _invoiceService.GetById(id.Value);
-        }
-        catch (InvoiceNotFoundException)
+        Invoice = _context.Invoices.Find(id.Value) ?? default!;
+        if (Invoice is null)
         {
             return NotFound();
-        }
-        catch (Exception)
-        {
-            return RedirectToPage("../Error");
         }
 
         return Page();

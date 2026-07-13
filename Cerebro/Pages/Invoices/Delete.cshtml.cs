@@ -1,6 +1,4 @@
-using Cerebro.Abstractions;
 using Cerebro.Data;
-using Cerebro.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,11 +6,11 @@ namespace Cerebro.Pages.Invoices;
 
 public class DeleteModel : PageModel
 {
-    private readonly IInvoiceService _invoiceService;
+    private readonly AppDbContext _context;
 
-    public DeleteModel(IInvoiceService invoiceService)
+    public DeleteModel(AppDbContext context)
     {
-        _invoiceService = invoiceService;
+        _context = context;
     }
 
     [BindProperty]
@@ -25,17 +23,10 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        try
-        {
-            Invoice = _invoiceService.GetById(id.Value);
-        }
-        catch (InvoiceNotFoundException)
+        Invoice = _context.Invoices.Find(id.Value) ?? default!;
+        if (Invoice is null)
         {
             return NotFound();
-        }
-        catch (Exception)
-        {
-            return RedirectToPage("../Error");
         }
 
         return Page();
@@ -48,18 +39,14 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        try
-        {
-            _invoiceService.Delete(id.Value);
-        }
-        catch (InvoiceNotFoundException)
+        var invoice = _context.Invoices.Find(id.Value);
+        if (invoice is null)
         {
             return NotFound();
         }
-        catch (Exception)
-        {
-            return RedirectToPage("../Error");
-        }
+
+        _context.Invoices.Remove(invoice);
+        _context.SaveChanges();
 
         return RedirectToPage("./Index");
     }

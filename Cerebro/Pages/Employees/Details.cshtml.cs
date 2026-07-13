@@ -1,42 +1,33 @@
-﻿using Cerebro.Abstractions;
 using Cerebro.Data;
-using Cerebro.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Cerebro.Pages.Employees
+namespace Cerebro.Pages.Employees;
+
+public class DetailsModel : PageModel
 {
-    public class DetailsModel : PageModel
+    private readonly AppDbContext _context;
+
+    public DetailsModel(AppDbContext context)
     {
-        private readonly IEmployeeService _employeeService;
+        _context = context;
+    }
 
-        public DetailsModel(IEmployeeService employeeService)
+    public Employee Employee { get; set; } = default!;
+
+    public IActionResult OnGet(int? id)
+    {
+        if (id == null)
         {
-            _employeeService = employeeService;
+            return NotFound();
         }
 
-        public Employee Employee { get; set; } = default!;
-
-        public IActionResult OnGet(int? id)
+        Employee = _context.Employees.Find(id.Value) ?? default!;
+        if (Employee is null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                Employee = _employeeService.GetById(id.Value);
-            }
-            catch (EmployeeNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return RedirectToPage("../Error");
-            }
-            return Page();
+            return NotFound();
         }
+
+        return Page();
     }
 }

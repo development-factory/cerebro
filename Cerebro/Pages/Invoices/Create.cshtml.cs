@@ -1,4 +1,3 @@
-using Cerebro.Abstractions;
 using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,11 +6,11 @@ namespace Cerebro.Pages.Invoices;
 
 public class CreateModel : PageModel
 {
-    private readonly IInvoiceService _invoiceService;
+    private readonly AppDbContext _context;
 
-    public CreateModel(IInvoiceService invoiceService)
+    public CreateModel(AppDbContext context)
     {
-        _invoiceService = invoiceService;
+        _context = context;
     }
 
     public IActionResult OnGet()
@@ -37,7 +36,18 @@ public class CreateModel : PageModel
 
         try
         {
-            _invoiceService.Create(Invoice);
+            if (Invoice.Amount < 0)
+            {
+                throw new ArgumentException("Amount cannot be negative");
+            }
+
+            if (Invoice.DueDate < Invoice.IssueDate)
+            {
+                throw new ArgumentException("Due date cannot be earlier than issue date");
+            }
+
+            _context.Invoices.Add(Invoice);
+            _context.SaveChanges();
         }
         catch (ArgumentException ex)
         {

@@ -1,50 +1,68 @@
-﻿using Cerebro.Abstractions;
 using Cerebro.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Cerebro.Pages.Employees
+namespace Cerebro.Pages.Employees;
+
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
+    private readonly AppDbContext _context;
+
+    public CreateModel(AppDbContext context)
     {
-        private readonly IEmployeeService _employeeService;
+        _context = context;
+    }
 
-        public CreateModel(IEmployeeService employeeService)
-        {
-            _employeeService = employeeService;
-        }
+    public IActionResult OnGet()
+    {
+        return Page();
+    }
 
-        public IActionResult OnGet()
+    [BindProperty]
+    public Employee Employee { get; set; } = default!;
+
+    public IActionResult OnPost()
+    {
+        if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        [BindProperty]
-        public Employee Employee { get; set; } = default!;
-
-        public IActionResult OnPost()
+        try
         {
-            if (!ModelState.IsValid)
+            if (Employee.HiringDate < DateTime.Today)
             {
-                return Page();
+                throw new ArgumentException("Hiring date cannot be in the past");
             }
 
-            try
+            if (Employee.ExitDate.HasValue)
             {
-                _employeeService.Create(Employee);
-            }
-            catch (ArgumentException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return Page();
-            }
-            catch (Exception)
-            {
-                return RedirectToPage("../Error");
+                throw new ArgumentException("Exit date cannot be set on creation");
             }
 
+            if (Employee.Salary < 0)
+            {
+                throw new ArgumentException("Salary cannot be negative");
+            }
 
-            return RedirectToPage("../Index");
+            if (Employee.DateOfBirth > DateTime.Today)
+            {
+                throw new ArgumentException("Date of birth cannot be in the future");
+            }
+
+            _context.Employees.Add(Employee);
+            _context.SaveChanges();
         }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return Page();
+        }
+        catch (Exception)
+        {
+            return RedirectToPage("../Error");
+        }
+
+        return RedirectToPage("../Index");
     }
 }
